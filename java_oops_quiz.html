@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java OOP Concepts Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2a36;
+    --border: #2a3a4a;
+    --accent: #7c3aed;
+    --accent2: #a78bfa;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --correct: #3fb950;
+    --wrong: #f85149;
+    --correct-bg: rgba(63,185,80,0.1);
+    --wrong-bg: rgba(248,81,73,0.1);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .back-link {
+    align-self: flex-start;
+    margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    transition: opacity 0.15s;
+  }
+  .back-link:hover { opacity: 1; }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    max-width: 640px;
+  }
+
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  h1 span { color: var(--accent2); }
+
+  .subtitle { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+
+  .pillars {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .pillar-tag {
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(124,58,237,0.12);
+    border: 1px solid rgba(124,58,237,0.3);
+    color: var(--accent2);
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 640px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .quiz-container { width: 100%; max-width: 640px; }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .question-card.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .q-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent2);
+    background: rgba(124,58,237,0.12);
+    border: 1px solid rgba(124,58,237,0.3);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .q-topic {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    background: var(--surface2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .question-text {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+
+  .code-snippet {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.25rem;
+    color: var(--accent2);
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: rgba(167,139,250,0.07);
+  }
+
+  .option-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: var(--border);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .option-btn.correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option-btn.correct .option-letter { background: var(--correct); color: #fff; }
+  .option-btn.wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; }
+  .option-btn:disabled { cursor: default; }
+
+  .explanation {
+    display: none;
+    margin-top: 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.84rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .explanation.show { display: block; animation: fadeIn 0.25s ease; }
+  .explanation strong { color: var(--accent2); }
+  .explanation code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    background: rgba(167,139,250,0.1);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+  }
+
+  .nav-row { display: flex; justify-content: flex-end; margin-top: 1.25rem; }
+
+  .next-btn {
+    display: none;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+  }
+
+  .next-btn:hover { opacity: 0.85; }
+  .next-btn.show { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  /* Score card */
+  #score-card {
+    display: none;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 640px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  #score-card h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent2);
+  }
+
+  .score-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 1rem 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .score-label { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .score-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .score-item { text-align: center; }
+  .score-item .val { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.75rem; color: var(--muted); }
+  .score-item.c .val { color: var(--correct); }
+  .score-item.w .val { color: var(--wrong); }
+
+  .score-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .badge-gold   { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .badge-silver { background: rgba(156,163,175,0.15); color: #9ca3af; border: 1px solid rgba(156,163,175,0.3); }
+  .badge-bronze { background: rgba(180,83,9,0.15);   color: #b45309; border: 1px solid rgba(180,83,9,0.3); }
+  .badge-try    { background: rgba(248,81,73,0.1);   color: var(--wrong); border: 1px solid rgba(248,81,73,0.25); }
+
+  .btn-row { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
+
+  .restart-btn, .home-btn {
+    border-radius: 8px;
+    padding: 0.7rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s, color 0.15s, opacity 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .restart-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .restart-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .home-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent2);
+  }
+  .home-btn:hover { opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-link">← Back to Home</a>
+
+<header>
+  <p class="logo">// Java OOP Quiz</p>
+  <h1>Java <span>OOP Concepts</span></h1>
+  <p class="subtitle">10 questions · Classes, Inheritance, Polymorphism &amp; more</p>
+  <div class="pillars">
+    <span class="pillar-tag">Encapsulation</span>
+    <span class="pillar-tag">Inheritance</span>
+    <span class="pillar-tag">Polymorphism</span>
+    <span class="pillar-tag">Abstraction</span>
+    <span class="pillar-tag">Interfaces</span>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="quiz-container" id="quizContainer">
+
+  <!-- Q1 -->
+  <div class="question-card active" id="q1">
+    <div class="q-meta">
+      <span class="q-number">Q 01 / 10</span>
+      <span class="q-topic">Classes &amp; Objects</span>
+    </div>
+    <p class="question-text">Which keyword is used to create an object from a class in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,0,0)"><span class="option-letter">A</span> create</button>
+      <button class="option-btn" onclick="answer(this,0,1)"><span class="option-letter">B</span> new</button>
+      <button class="option-btn" onclick="answer(this,0,2)"><span class="option-letter">C</span> object</button>
+      <button class="option-btn" onclick="answer(this,0,3)"><span class="option-letter">D</span> instantiate</button>
+    </div>
+    <div class="explanation" id="exp0">
+      <strong>new</strong> is the keyword used to instantiate objects in Java. For example: <code>Dog d = new Dog();</code> allocates memory and calls the constructor. There is no <code>create</code> or <code>object</code> keyword in Java.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next0" onclick="nextQ(1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-card" id="q2">
+    <div class="q-meta">
+      <span class="q-number">Q 02 / 10</span>
+      <span class="q-topic">Encapsulation</span>
+    </div>
+    <p class="question-text">What is the main purpose of encapsulation in OOP?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,1,0)"><span class="option-letter">A</span> To allow a class to inherit from multiple classes</button>
+      <button class="option-btn" onclick="answer(this,1,1)"><span class="option-letter">B</span> To bundle data and methods together, hiding internal details</button>
+      <button class="option-btn" onclick="answer(this,1,2)"><span class="option-letter">C</span> To allow one method to have many forms</button>
+      <button class="option-btn" onclick="answer(this,1,3)"><span class="option-letter">D</span> To define abstract behavior</button>
+    </div>
+    <div class="explanation" id="exp1">
+      <strong>Encapsulation</strong> bundles data (fields) and the methods that operate on that data into a single unit (class), while hiding the internal state from outside access. It is achieved using <code>private</code> fields with <code>public</code> getters/setters.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next1" onclick="nextQ(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-card" id="q3">
+    <div class="q-meta">
+      <span class="q-number">Q 03 / 10</span>
+      <span class="q-topic">Inheritance</span>
+    </div>
+    <p class="question-text">What will the following code output?</p>
+    <div class="code-snippet">class Animal {
+    void sound() { System.out.println("Generic sound"); }
+}
+class Dog extends Animal {
+    void sound() { System.out.println("Woof"); }
+}
+public class Main {
+    public static void main(String[] args) {
+        Animal a = new Dog();
+        a.sound();
+    }
+}</div>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,2,0)"><span class="option-letter">A</span> Generic sound</button>
+      <button class="option-btn" onclick="answer(this,2,1)"><span class="option-letter">B</span> Woof</button>
+      <button class="option-btn" onclick="answer(this,2,2)"><span class="option-letter">C</span> Compilation error</button>
+      <button class="option-btn" onclick="answer(this,2,3)"><span class="option-letter">D</span> Runtime error</button>
+    </div>
+    <div class="explanation" id="exp2">
+      <strong>Woof</strong> — This demonstrates <em>runtime polymorphism</em> (dynamic dispatch). Even though the reference type is <code>Animal</code>, the actual object is <code>Dog</code>, so the overridden <code>sound()</code> in <code>Dog</code> is called at runtime.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next2" onclick="nextQ(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-card" id="q4">
+    <div class="q-meta">
+      <span class="q-number">Q 04 / 10</span>
+      <span class="q-topic">Abstraction</span>
+    </div>
+    <p class="question-text">Which of the following is true about abstract classes in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,3,0)"><span class="option-letter">A</span> Abstract classes can be instantiated directly</button>
+      <button class="option-btn" onclick="answer(this,3,1)"><span class="option-letter">B</span> Abstract classes must have all methods abstract</button>
+      <button class="option-btn" onclick="answer(this,3,2)"><span class="option-letter">C</span> Abstract classes can have both abstract and non-abstract methods</button>
+      <button class="option-btn" onclick="answer(this,3,3)"><span class="option-letter">D</span> A class can extend multiple abstract classes</button>
+    </div>
+    <div class="explanation" id="exp3">
+      <strong>Abstract classes can have both abstract and non-abstract methods.</strong> They cannot be instantiated directly. A subclass must implement all abstract methods (or itself be declared abstract). Java supports only single class inheritance, so a class can extend only one abstract class.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next3" onclick="nextQ(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-card" id="q5">
+    <div class="q-meta">
+      <span class="q-number">Q 05 / 10</span>
+      <span class="q-topic">Interfaces</span>
+    </div>
+    <p class="question-text">Which keyword does a class use to implement an interface in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,4,0)"><span class="option-letter">A</span> extends</button>
+      <button class="option-btn" onclick="answer(this,4,1)"><span class="option-letter">B</span> implements</button>
+      <button class="option-btn" onclick="answer(this,4,2)"><span class="option-letter">C</span> inherits</button>
+      <button class="option-btn" onclick="answer(this,4,3)"><span class="option-letter">D</span> interface</button>
+    </div>
+    <div class="explanation" id="exp4">
+      <strong>implements</strong> is used by a class to adopt an interface contract. A class uses <code>extends</code> for another class and <code>implements</code> for interfaces. A class can implement multiple interfaces: <code>class Foo implements A, B { }</code>.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next4" onclick="nextQ(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="question-card" id="q6">
+    <div class="q-meta">
+      <span class="q-number">Q 06 / 10</span>
+      <span class="q-topic">Polymorphism</span>
+    </div>
+    <p class="question-text">Method overloading in Java is an example of which type of polymorphism?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,5,0)"><span class="option-letter">A</span> Runtime polymorphism</button>
+      <button class="option-btn" onclick="answer(this,5,1)"><span class="option-letter">B</span> Compile-time polymorphism</button>
+      <button class="option-btn" onclick="answer(this,5,2)"><span class="option-letter">C</span> Dynamic dispatch</button>
+      <button class="option-btn" onclick="answer(this,5,3)"><span class="option-letter">D</span> Covariant polymorphism</button>
+    </div>
+    <div class="explanation" id="exp5">
+      <strong>Compile-time polymorphism</strong> (also called static binding). Method overloading is resolved at compile time based on the method signature (number/type of parameters). Method <em>overriding</em> is runtime polymorphism — resolved at runtime via dynamic dispatch.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next5" onclick="nextQ(6)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="question-card" id="q7">
+    <div class="q-meta">
+      <span class="q-number">Q 07 / 10</span>
+      <span class="q-topic">Inheritance</span>
+    </div>
+    <p class="question-text">What does the <code style="color:var(--accent2);background:rgba(167,139,250,0.1);padding:0.1rem 0.3rem;border-radius:3px;font-family:monospace">super</code> keyword do in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,6,0)"><span class="option-letter">A</span> Refers to the current class instance</button>
+      <button class="option-btn" onclick="answer(this,6,1)"><span class="option-letter">B</span> Calls the static method of the parent class</button>
+      <button class="option-btn" onclick="answer(this,6,2)"><span class="option-letter">C</span> Refers to the parent class and can call its constructor or methods</button>
+      <button class="option-btn" onclick="answer(this,6,3)"><span class="option-letter">D</span> Creates a new superclass object</button>
+    </div>
+    <div class="explanation" id="exp6">
+      <strong>super</strong> refers to the immediate parent class. It can be used to call the parent constructor (<code>super()</code>) or a parent method (<code>super.method()</code>). This is useful when you override a method but still want to invoke the parent's version.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next6" onclick="nextQ(7)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="question-card" id="q8">
+    <div class="q-meta">
+      <span class="q-number">Q 08 / 10</span>
+      <span class="q-topic">Interfaces vs Abstract</span>
+    </div>
+    <p class="question-text">Which statement correctly differentiates an interface from an abstract class in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,7,0)"><span class="option-letter">A</span> An interface can have instance variables; an abstract class cannot</button>
+      <button class="option-btn" onclick="answer(this,7,1)"><span class="option-letter">B</span> A class can implement multiple interfaces but extend only one abstract class</button>
+      <button class="option-btn" onclick="answer(this,7,2)"><span class="option-letter">C</span> Abstract classes support default methods; interfaces do not</button>
+      <button class="option-btn" onclick="answer(this,7,3)"><span class="option-letter">D</span> Interfaces can have constructors; abstract classes cannot</button>
+    </div>
+    <div class="explanation" id="exp7">
+      <strong>A class can implement multiple interfaces but extend only one abstract class.</strong> This is Java's solution to the diamond problem. Since Java 8, interfaces can also have <code>default</code> and <code>static</code> methods. Interfaces use <code>public static final</code> constants, not regular instance variables.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next7" onclick="nextQ(8)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="question-card" id="q9">
+    <div class="q-meta">
+      <span class="q-number">Q 09 / 10</span>
+      <span class="q-topic">Constructors</span>
+    </div>
+    <p class="question-text">What is a constructor in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,8,0)"><span class="option-letter">A</span> A method that returns the class type</button>
+      <button class="option-btn" onclick="answer(this,8,1)"><span class="option-letter">B</span> A special method with no return type, called when an object is created</button>
+      <button class="option-btn" onclick="answer(this,8,2)"><span class="option-letter">C</span> A static method that initializes class variables</button>
+      <button class="option-btn" onclick="answer(this,8,3)"><span class="option-letter">D</span> A method used only in abstract classes</button>
+    </div>
+    <div class="explanation" id="exp8">
+      <strong>A constructor</strong> is a special method that has the same name as the class and no return type (not even <code>void</code>). It is automatically called when an object is created with <code>new</code>. Java provides a default no-arg constructor if none is defined.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next8" onclick="nextQ(9)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="question-card" id="q10">
+    <div class="q-meta">
+      <span class="q-number">Q 10 / 10</span>
+      <span class="q-topic">final keyword</span>
+    </div>
+    <p class="question-text">Which of the following correctly describes the effect of the <code style="color:var(--accent2);background:rgba(167,139,250,0.1);padding:0.1rem 0.3rem;border-radius:3px;font-family:monospace">final</code> keyword on a class?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,9,0)"><span class="option-letter">A</span> The class can only have static methods</button>
+      <button class="option-btn" onclick="answer(this,9,1)"><span class="option-letter">B</span> The class cannot be instantiated</button>
+      <button class="option-btn" onclick="answer(this,9,2)"><span class="option-letter">C</span> The class cannot be subclassed (extended)</button>
+      <button class="option-btn" onclick="answer(this,9,3)"><span class="option-letter">D</span> The class's methods cannot be overloaded</button>
+    </div>
+    <div class="explanation" id="exp9">
+      <strong>A final class cannot be subclassed.</strong> For example, the <code>String</code> class in Java is <code>final</code> — you cannot extend it. Similarly, <code>final</code> on a method prevents overriding, and <code>final</code> on a variable makes it a constant.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next9" onclick="showScore()">See Results →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Score card -->
+<div id="score-card">
+  <h2>Quiz Complete! 🎓</h2>
+  <div class="score-big" id="scorePct">0%</div>
+  <p class="score-label" id="scoreLabel">You answered 0 out of 10 correctly.</p>
+  <div id="scoreBadge"></div>
+  <div class="score-breakdown">
+    <div class="score-item c"><div class="val" id="correctCount">0</div><div class="lbl">Correct</div></div>
+    <div class="score-item w"><div class="val" id="wrongCount">0</div><div class="lbl">Wrong</div></div>
+  </div>
+  <div class="btn-row">
+    <button class="restart-btn" onclick="restart()">↺ Try Again</button>
+    <a href="index.html" class="home-btn">⌂ Back to Home</a>
+  </div>
+</div>
+
+<script>
+  // correct option indices (0-based) for each question
+  const answers = [1, 1, 1, 2, 1, 1, 2, 1, 1, 2];
+  const TOTAL = 10;
+  let score = 0;
+  let answered = new Array(TOTAL).fill(false);
+
+  function answer(btn, qIdx, chosenIdx) {
+    if (answered[qIdx]) return;
+    answered[qIdx] = true;
+
+    const card = document.getElementById('q' + (qIdx + 1));
+    const btns = card.querySelectorAll('.option-btn');
+    btns.forEach(b => b.disabled = true);
+
+    if (chosenIdx === answers[qIdx]) {
+      btn.classList.add('correct');
+      score++;
+    } else {
+      btn.classList.add('wrong');
+      btns[answers[qIdx]].classList.add('correct');
+    }
+
+    document.getElementById('exp' + qIdx).classList.add('show');
+    document.getElementById('next' + qIdx).classList.add('show');
+
+    const done = answered.filter(Boolean).length;
+    document.getElementById('progressBar').style.width = (done / TOTAL * 100) + '%';
+  }
+
+  function nextQ(nextIdx) {
+    document.getElementById('q' + nextIdx).classList.remove('active');
+    document.getElementById('q' + (nextIdx + 1)).classList.add('active');
+  }
+
+  function showScore() {
+    document.getElementById('q10').classList.remove('active');
+    document.getElementById('progressBar').style.width = '100%';
+
+    const card = document.getElementById('score-card');
+    card.style.display = 'block';
+
+    const pct = Math.round(score / TOTAL * 100);
+    document.getElementById('scorePct').textContent = pct + '%';
+    document.getElementById('scoreLabel').textContent =
+      'You answered ' + score + ' out of ' + TOTAL + ' correctly.';
+    document.getElementById('correctCount').textContent = score;
+    document.getElementById('wrongCount').textContent = TOTAL - score;
+
+    // Badge
+    let badgeClass, badgeText;
+    if (pct >= 90)      { badgeClass = 'badge-gold';   badgeText = '🥇 OOP Master'; }
+    else if (pct >= 70) { badgeClass = 'badge-silver'; badgeText = '🥈 Solid Understanding'; }
+    else if (pct >= 50) { badgeClass = 'badge-bronze'; badgeText = '🥉 Keep Practicing'; }
+    else                { badgeClass = 'badge-try';    badgeText = '💡 Review the Concepts'; }
+
+    document.getElementById('scoreBadge').innerHTML =
+      '<span class="score-badge ' + badgeClass + '">' + badgeText + '</span>';
+  }
+
+  function restart() {
+    score = 0;
+    answered = new Array(TOTAL).fill(false);
+    document.getElementById('score-card').style.display = 'none';
+    document.getElementById('progressBar').style.width = '0%';
+    document.getElementById('scoreBadge').innerHTML = '';
+
+    for (let i = 1; i <= TOTAL; i++) {
+      const card = document.getElementById('q' + i);
+      card.classList.remove('active');
+      card.querySelectorAll('.option-btn').forEach(b => {
+        b.disabled = false;
+        b.classList.remove('correct', 'wrong');
+      });
+      const exp = document.getElementById('exp' + (i - 1));
+      if (exp) exp.classList.remove('show');
+      const nxt = document.getElementById('next' + (i - 1));
+      if (nxt) nxt.classList.remove('show');
+    }
+    document.getElementById('q1').classList.add('active');
+  }
+</script>
+</body>
+</html>

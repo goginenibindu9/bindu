@@ -3,9 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course page</title>
+    <title>Java Course</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            gap: 1rem;
+        }
+        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        p { color: #8b949e; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        .card-grid {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .quiz-card {
+            background: #161b22;
+            border: 1px solid #2a3a4a;
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            text-decoration: none;
+            color: #e6edf3;
+            transition: border-color 0.2s, transform 0.2s;
+            width: 200px;
+        }
+        .quiz-card:hover { border-color: #7c3aed; transform: translateY(-3px); }
+        .quiz-card .icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .quiz-card .title { font-weight: 600; font-size: 0.95rem; }
+        .quiz-card .desc { font-size: 0.75rem; color: #8b949e; margin-top: 0.3rem; }
+    </style>
 </head>
 <body>
-    <a href="java_quiz.html">java quiz</a>
+    <h1>☕ Java Quiz Hub</h1>
+    <p>Pick a quiz to test your Java knowledge</p>
+    <div class="card-grid">
+        <a href="java_quiz.html" class="quiz-card">
+            <div class="icon">📘</div>
+            <div class="title">Java Basics</div>
+            <div class="desc">Syntax, data types &amp; control flow</div>
+        </a>
+        <a href="java_oops_quiz.html" class="quiz-card">
+            <div class="icon">🧩</div>
+            <div class="title">OOP Concepts</div>
+            <div class="desc">Inheritance, polymorphism &amp; more</div>
+        </a>
+    </div>
 </body>
 </html>
