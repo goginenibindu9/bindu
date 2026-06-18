@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Java Programming Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2a36;
+    --border: #2a3a4a;
+    --accent: #f89820;
+    --accent2: #4db6e6;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --correct: #3fb950;
+    --wrong: #f85149;
+    --correct-bg: rgba(63,185,80,0.1);
+    --wrong-bg: rgba(248,81,73,0.1);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+  }
+
+  .logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text);
+  }
+
+  h1 span {
+    color: var(--accent);
+  }
+
+  .subtitle {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .progress-bar-wrap {
+    width: 100%;
+    max-width: 600px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .quiz-container {
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .question-card.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .q-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(248,152,32,0.1);
+    border: 1px solid rgba(248,152,32,0.25);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .q-topic {
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .question-text {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+    color: var(--text);
+  }
+
+  .code-snippet {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.25rem;
+    color: var(--accent2);
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.6;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 0.6rem; }
+
+  .option-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: rgba(77,182,230,0.07);
+  }
+
+  .option-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    background: var(--border);
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .option-btn.correct {
+    border-color: var(--correct);
+    background: var(--correct-bg);
+  }
+  .option-btn.correct .option-letter { background: var(--correct); color: #fff; }
+
+  .option-btn.wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-bg);
+  }
+  .option-btn.wrong .option-letter { background: var(--wrong); color: #fff; }
+
+  .option-btn:disabled { cursor: default; }
+
+  .explanation {
+    display: none;
+    margin-top: 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.84rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+
+  .explanation.show { display: block; animation: fadeIn 0.25s ease; }
+  .explanation strong { color: var(--accent2); }
+
+  .nav-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+  }
+
+  .next-btn {
+    display: none;
+    background: var(--accent);
+    color: #0d1117;
+    border: none;
+    border-radius: 8px;
+    padding: 0.65rem 1.4rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s;
+  }
+
+  .next-btn:hover { opacity: 0.85; }
+  .next-btn.show { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  /* Score card */
+  #score-card {
+    display: none;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 600px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  #score-card h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent);
+  }
+
+  .score-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 1rem 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .score-label { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  .score-breakdown {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .score-item { text-align: center; }
+  .score-item .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .score-item .lbl { font-size: 0.75rem; color: var(--muted); }
+  .score-item.c .val { color: var(--correct); }
+  .score-item.w .val { color: var(--wrong); }
+
+  .restart-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.7rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: border-color 0.15s;
+  }
+  .restart-btn:hover { border-color: var(--accent); color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="logo">// Java Quiz</p>
+  <h1>Intro to <span>Java</span><br>Programming</h1>
+  <p class="subtitle">5 questions · Test your fundamentals</p>
+</header>
+
+<div class="progress-bar-wrap">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="quiz-container" id="quizContainer">
+
+  <!-- Q1 -->
+  <div class="question-card active" id="q1">
+    <div class="q-meta">
+      <span class="q-number">Q 01 / 05</span>
+      <span class="q-topic">Basics</span>
+    </div>
+    <p class="question-text">Which keyword is used to print output to the console in Java?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,0,0)"><span class="option-letter">A</span> print()</button>
+      <button class="option-btn" onclick="answer(this,0,1)"><span class="option-letter">B</span> console.log()</button>
+      <button class="option-btn" onclick="answer(this,0,2)"><span class="option-letter">C</span> System.out.println()</button>
+      <button class="option-btn" onclick="answer(this,0,3)"><span class="option-letter">D</span> echo()</button>
+    </div>
+    <div class="explanation" id="exp0">
+      <strong>System.out.println()</strong> is Java's standard way to print to the console. <code>System</code> is a class, <code>out</code> is a PrintStream field, and <code>println</code> prints the text followed by a newline.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next0" onclick="nextQ(1)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="question-card" id="q2">
+    <div class="q-meta">
+      <span class="q-number">Q 02 / 05</span>
+      <span class="q-topic">Data Types</span>
+    </div>
+    <p class="question-text">What is the output of the following code?</p>
+    <div class="code-snippet">int x = 5;
+int y = 2;
+System.out.println(x / y);</div>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,1,0)"><span class="option-letter">A</span> 2.5</button>
+      <button class="option-btn" onclick="answer(this,1,1)"><span class="option-letter">B</span> 2</button>
+      <button class="option-btn" onclick="answer(this,1,2)"><span class="option-letter">C</span> 3</button>
+      <button class="option-btn" onclick="answer(this,1,3)"><span class="option-letter">D</span> Compilation error</button>
+    </div>
+    <div class="explanation" id="exp1">
+      <strong>2</strong> — Java performs <em>integer division</em> when both operands are <code>int</code>. The decimal part is truncated, so 5 / 2 = 2, not 2.5. To get 2.5, cast one operand to <code>double</code>: <code>(double) x / y</code>.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next1" onclick="nextQ(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="question-card" id="q3">
+    <div class="q-meta">
+      <span class="q-number">Q 03 / 05</span>
+      <span class="q-topic">OOP</span>
+    </div>
+    <p class="question-text">In Java, which access modifier makes a class member accessible only within the same class?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,2,0)"><span class="option-letter">A</span> public</button>
+      <button class="option-btn" onclick="answer(this,2,1)"><span class="option-letter">B</span> protected</button>
+      <button class="option-btn" onclick="answer(this,2,2)"><span class="option-letter">C</span> default (no modifier)</button>
+      <button class="option-btn" onclick="answer(this,2,3)"><span class="option-letter">D</span> private</button>
+    </div>
+    <div class="explanation" id="exp2">
+      <strong>private</strong> restricts access to within the declaring class only. <code>public</code> = everywhere; <code>protected</code> = same package + subclasses; <em>default</em> (no modifier) = same package only.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next2" onclick="nextQ(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="question-card" id="q4">
+    <div class="q-meta">
+      <span class="q-number">Q 04 / 05</span>
+      <span class="q-topic">Control Flow</span>
+    </div>
+    <p class="question-text">How many times will the following loop print "Hello"?</p>
+    <div class="code-snippet">for (int i = 0; i &lt; 5; i++) {
+    System.out.println("Hello");
+}</div>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,3,0)"><span class="option-letter">A</span> 4 times</button>
+      <button class="option-btn" onclick="answer(this,3,1)"><span class="option-letter">B</span> 6 times</button>
+      <button class="option-btn" onclick="answer(this,3,2)"><span class="option-letter">C</span> 5 times</button>
+      <button class="option-btn" onclick="answer(this,3,3)"><span class="option-letter">D</span> Infinite loop</button>
+    </div>
+    <div class="explanation" id="exp3">
+      <strong>5 times</strong>. The loop starts at <code>i = 0</code> and runs while <code>i &lt; 5</code>, so it executes for i = 0, 1, 2, 3, 4 — exactly 5 iterations.
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next3" onclick="nextQ(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="question-card" id="q5">
+    <div class="q-meta">
+      <span class="q-number">Q 05 / 05</span>
+      <span class="q-topic">Strings</span>
+    </div>
+    <p class="question-text">Which method is used to find the number of characters in a Java String?</p>
+    <div class="options">
+      <button class="option-btn" onclick="answer(this,4,0)"><span class="option-letter">A</span> size()</button>
+      <button class="option-btn" onclick="answer(this,4,1)"><span class="option-letter">B</span> length()</button>
+      <button class="option-btn" onclick="answer(this,4,2)"><span class="option-letter">C</span> count()</button>
+      <button class="option-btn" onclick="answer(this,4,3)"><span class="option-letter">D</span> charAt()</button>
+    </div>
+    <div class="explanation" id="exp4">
+      <strong>length()</strong> returns the number of characters in a String. For example, <code>"Java".length()</code> returns 4. Note: arrays use <code>.length</code> (property), but Strings use <code>.length()</code> (method).
+    </div>
+    <div class="nav-row">
+      <button class="next-btn" id="next4" onclick="showScore()">See Results →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Score card -->
+<div id="score-card">
+  <h2>Quiz Complete!</h2>
+  <div class="score-big" id="scorePct">0%</div>
+  <p class="score-label" id="scoreLabel">You answered 0 out of 5 correctly.</p>
+  <div class="score-breakdown">
+    <div class="score-item c"><div class="val" id="correctCount">0</div><div class="lbl">Correct</div></div>
+    <div class="score-item w"><div class="val" id="wrongCount">0</div><div class="lbl">Wrong</div></div>
+  </div>
+  <button class="restart-btn" onclick="restart()">↺ Try Again</button>
+</div>
+
+<script>
+  // correct option indices (0-based) for each question
+  const answers = [2, 1, 3, 2, 1];
+  let score = 0;
+  let answered = [false, false, false, false, false];
+
+  function answer(btn, qIdx, chosenIdx) {
+    if (answered[qIdx]) return;
+    answered[qIdx] = true;
+
+    const card = document.getElementById('q' + (qIdx + 1));
+    const btns = card.querySelectorAll('.option-btn');
+    btns.forEach(b => b.disabled = true);
+
+    if (chosenIdx === answers[qIdx]) {
+      btn.classList.add('correct');
+      score++;
+    } else {
+      btn.classList.add('wrong');
+      btns[answers[qIdx]].classList.add('correct');
+    }
+
+    document.getElementById('exp' + qIdx).classList.add('show');
+    document.getElementById('next' + qIdx).classList.add('show');
+
+    // update progress
+    const done = answered.filter(Boolean).length;
+    document.getElementById('progressBar').style.width = (done / 5 * 100) + '%';
+  }
+
+  function nextQ(nextIdx) {
+    document.getElementById('q' + nextIdx).classList.remove('active');
+    document.getElementById('q' + (nextIdx + 1)).classList.add('active');
+  }
+
+  function showScore() {
+    document.getElementById('q5').classList.remove('active');
+    document.getElementById('progressBar').style.width = '100%';
+    const card = document.getElementById('score-card');
+    card.style.display = 'block';
+    const pct = Math.round(score / 5 * 100);
+    document.getElementById('scorePct').textContent = pct + '%';
+    document.getElementById('scoreLabel').textContent = 'You answered ' + score + ' out of 5 correctly.';
+    document.getElementById('correctCount').textContent = score;
+    document.getElementById('wrongCount').textContent = 5 - score;
+  }
+
+  function restart() {
+    score = 0;
+    answered = [false, false, false, false, false];
+    document.getElementById('score-card').style.display = 'none';
+    document.getElementById('progressBar').style.width = '0%';
+
+    for (let i = 1; i <= 5; i++) {
+      const card = document.getElementById('q' + i);
+      card.classList.remove('active');
+      const btns = card.querySelectorAll('.option-btn');
+      btns.forEach(b => {
+        b.disabled = false;
+        b.classList.remove('correct', 'wrong');
+      });
+      const exp = document.getElementById('exp' + (i - 1));
+      if (exp) exp.classList.remove('show');
+      const nxt = document.getElementById('next' + (i - 1));
+      if (nxt) nxt.classList.remove('show');
+    }
+    document.getElementById('q1').classList.add('active');
+  }
+</script>
+</body>
+</html>
